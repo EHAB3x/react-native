@@ -1,54 +1,77 @@
-import React, {useState} from 'react';
-import { StyleSheet, View, FlatList, Alert,TouchableWithoutFeedback, Keyboard } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, FlatList, Alert, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from './components/Header';
 import TodoItem from './components/TodoItem';
 import AddTodo from './components/AddTodo';
-import Sandbox from './components/Sandbox';
 
 export default function App() {
-  const [todos, setTodos] = useState([
-    {text: "Buy coffee", key: '1'},
-    {text: "Create an App", key: '2'},
-    {text: "Play on the switch", key: '3'},
-  ])
+  const [todos, setTodos] = useState([]);
 
-  const pressHandler = (key)=>{
-    setTodos((prev)=>{
-      return prev.filter(todo=> todo.key !== key);
+  useEffect(() => {
+    retrieveData();
+  }, []);
+
+  const storeData = async (todos) => {
+    try {
+      await AsyncStorage.setItem('todos', JSON.stringify(todos));
+    } catch (error) {
+      console.error('Error storing data:', error);
+    }
+  };
+
+  const retrieveData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('todos');
+      if (value !== null) {
+        // We have data!!
+        setTodos(JSON.parse(value));
+      }
+    } catch (error) {
+      console.error('Error retrieving data:', error);
+    }
+  };
+
+  const pressHandler = (key) => {
+    setTodos(prev => {
+      return prev.filter(todo => todo.key !== key);
     });
+    storeData(todos.filter(todo => todo.key !== key));
   }
 
-  const submitHandler = (txt)=>{
+  const submitHandler = (txt) => {
     if (txt.length > 3) {
-      setTodos((prevTodos=>{
-        return [...prevTodos,{text:txt, key:Math.random().toString()}]
-      }));
-    }else{
+      const newTodo = { text: txt, key: Math.random().toString() };
+      setTodos(prevTodos => {
+        const updatedTodos = [...prevTodos, newTodo];
+        storeData(updatedTodos);
+        return updatedTodos;
+      });
+    } else {
       Alert.alert(
         "OOPS!",
-        "Todos must be  over 3 chars long",
+        "Todos must be over 3 chars long",
         [
           {
-            text:"Understood",
+            text: "Understood",
           }
         ]
-        )
+      )
     }
-    
+
   }
-  
+
   return (
-    // <Sandbox />
-    <TouchableWithoutFeedback onPress={()=>{Keyboard.dismiss();}}>
+    <TouchableWithoutFeedback onPress={() => { Keyboard.dismiss(); }}>
       <View style={styles.container}>
         <Header />
         <View style={styles.content}>
-          <AddTodo submitHandler={submitHandler}/>
+          <AddTodo submitHandler={submitHandler} />
           <View style={styles.list}>
-            <FlatList 
+            <FlatList
               data={todos}
-              renderItem={({item})=>(
-                <TodoItem item={item} pressHandler={pressHandler}/>
+              renderItem={({ item }) => (
+                <TodoItem item={item} pressHandler={pressHandler} />
               )}
             />
           </View>
@@ -63,12 +86,12 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  content:{
-    padding:40,
+  content: {
+    padding: 40,
     flex: 1,
   },
-  list:{
-    flex:1,
+  list: {
+    flex: 1,
     marginTop: 20,
   }
 });
