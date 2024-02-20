@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Todo App",
-    "slug": "first-project",
+    "slug": "eh-todo-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -30,8 +30,9 @@
     },
     "extra": {
       "eas": {
-        "projectId": "ecbaecc2-8a0f-49e3-88b5-45bf92c2b958"
+        "projectId": "c95fad81-7119-496a-851b-a71a3f488b97"
       }
-    }
+    },
+    "owner": "ihab_3x"
   }
 }
