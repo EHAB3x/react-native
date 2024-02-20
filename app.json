@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Todo App",
-    "slug": "Todo App",
+    "slug": "first-project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,7 +15,8 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "Todo.expo.client"
     },
     "android": {
       "adaptiveIcon": {
